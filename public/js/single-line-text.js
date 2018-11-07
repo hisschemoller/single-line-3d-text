@@ -11,7 +11,7 @@ function initWorld() {
 
   renderer = new WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
-  renderer.setClearColor(0xddddff);
+  renderer.setClearColor(0x000000);
   document.body.appendChild( renderer.domElement );
 
   const light = new DirectionalLight(0xffffff, 1.5);
@@ -26,9 +26,9 @@ function initWorld() {
 
 function animate() {
   requestAnimationFrame(animate);
-  textGroup.rotation.x += 0.01;
-  textGroup.rotation.y += 0.005;
-  textGroup.rotation.z -= 0.007;
+  textGroup.rotation.x += 0.003 * 2;
+  textGroup.rotation.y += 0.005 * 2;
+  textGroup.rotation.z += 0.004 * 2;
   renderer.render( scene, camera );
 }
 
@@ -47,28 +47,32 @@ function write(str) {
   const {LineBasicMaterial, Geometry, BufferGeometry, Object3D, Color, Line, Vector3} = THREE;
 
   const lineMaterial = new LineBasicMaterial({
-    color: new Color( 0x0000ff ),
+    color: new Color( 0x00ff00 ),
     linewidth: 3,
   });
 
   for (let i = 0, n = str.length; i < n; i++) {
     const char = str.charAt(i);
-    const path = parsePathNode(char);
-    const points = path.getPoints();
-    console.log('path', path);
+    const svgPath = font.chars[char];
+    const svgSubPaths = svgPath.split('M');
+    svgSubPaths.shift();
+    console.log('svgPath', svgPath);
+    console.log('svgSubPaths', svgSubPaths);
+    svgSubPaths.forEach(svgSubPath => {
+      const path = parsePathNode('M' + svgSubPath);
+      const points = path.getPoints();
 
-    const geometry = new BufferGeometry().setFromPoints( points );
-    // geometry.vertices = shapePath;
-    
-    const line = new Line(geometry, lineMaterial);
-    line.translateX(9 * i);
-    line.rotateX(-Math.PI);
+      const geometry = new BufferGeometry().setFromPoints( points );
+      const line = new Line(geometry, lineMaterial);
+      line.translateX(9 * i);
+      line.rotateX(-Math.PI);
 
-    textGroup.add(line);
+      textGroup.add(line);
+    });
   }
 }
 
-function parsePathNode(char, style) {
+function parsePathNode(d, style) {
   const path = new THREE.Path();
   // const path = new THREE.ShapePath();
   // path.color.setStyle( 0x6666ff );
@@ -79,7 +83,7 @@ function parsePathNode(char, style) {
   const firstPoint = new THREE.Vector2();
   let isFirstPoint = true;
   let doSetFirstPoint = false;
-  const d = font.chars[char];
+  // const d = font.chars[char];
   const commands = d.match( /[a-df-z][^a-df-z]*/ig );
 
   commands.forEach(command => {
@@ -387,20 +391,13 @@ function parsePathNode(char, style) {
 }
 
 function parseFloats( string ) {
-
   var array = string.split( /[\s,]+|(?=\s?[+\-])/ );
-
   for ( var i = 0; i < array.length; i ++ ) {
-
     var number = array[ i ];
-
     // Handle values like 48.6037.7.8
     // TODO Find a regex for this
-
     if ( number.indexOf( '.' ) !== number.lastIndexOf( '.' ) ) {
-
       var split = number.split( '.' );
-
       for ( var s = 2; s < split.length; s ++ ) {
         array.splice( i + s - 1, 0, '0.' + split[ s ] );
       }
