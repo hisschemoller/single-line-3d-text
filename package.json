@@ -1,0 +1,20 @@
+{
+  "name": "single-line-text-threejs",
+  "version": "1.0.0",
+  "description": "Simple single line text in webGL with minimal line segments.",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3"
+  }
+}
