@@ -54,27 +54,34 @@ function write(fontData, str) {
   const lineGroup = new Group();
   textGroup.add(lineGroup);
 
+  let numRenderedChars = 0;
+
   for (let i = 0, n = str.length; i < n; i++) {
     const char = str.charAt(i);
     const svgPath = fontData.chars[char];
-    const svgSubPaths = svgPath.split('M');
-    svgSubPaths.shift();
-    
-    svgSubPaths.forEach(svgSubPath => {
-      const path = parsePathNode('M' + svgSubPath);
-      const points = path.getPoints();
 
-      const geometry = new BufferGeometry().setFromPoints( points );
-      const line = new Line(geometry, lineMaterial);
-      line.translateX((fontData.viewBox.width + fontData.spacing) * i);
-      line.rotateX(-Math.PI);
+    if (svgPath) {
+      numRenderedChars++;
 
-      lineGroup.add(line);
-    });
+      const svgSubPaths = svgPath.split('M');
+      svgSubPaths.shift();
+      
+      svgSubPaths.forEach(svgSubPath => {
+        const path = parsePathNode('M' + svgSubPath);
+        const points = path.getPoints();
+
+        const geometry = new BufferGeometry().setFromPoints( points );
+        const line = new Line(geometry, lineMaterial);
+        line.translateX((fontData.viewBox.width + fontData.spacing) * numRenderedChars);
+        line.rotateX(-Math.PI);
+
+        lineGroup.add(line);
+      });
+    }
   }
 
   // center line of text
-  lineGroup.translateX((str.length * (fontData.viewBox.width + fontData.spacing)) / -2);
+  lineGroup.translateX((numRenderedChars * (fontData.viewBox.width + fontData.spacing)) / -2);
 }
 
 /**
