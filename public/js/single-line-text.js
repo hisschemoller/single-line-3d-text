@@ -4,13 +4,16 @@ let textGroup;
 function initWorld() {
   const {Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight, Group} = THREE;
 
+  let rootEl = document.getElementById('canvas-container');
+  let rect = rootEl.getBoundingClientRect();
+
   scene = new Scene();
-  camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  camera = new PerspectiveCamera( 75, rect.width / rect.height, 0.1, 1000 );
 
   renderer = new WebGLRenderer();
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( rect.width, rect.height );
   renderer.setClearColor(0x000000);
-  document.body.appendChild( renderer.domElement );
+  rootEl.appendChild( renderer.domElement );
 
   const light = new DirectionalLight(0xffffff, 1.5);
   light.position.set(0, 0, 1);
