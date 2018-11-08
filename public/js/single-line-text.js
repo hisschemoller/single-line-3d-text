@@ -1,6 +1,6 @@
 let scene, camera, renderer;
 let text;
-let font;
+let fontData;
 let textGroup;
 
 function initWorld() {
@@ -36,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('../json/asteroids.json')
     .then(response => response.json())
     .then(json => {
-      font = json;
+      fontData = json;
       initWorld();
-      write('ABCDEF');
+      write('HIJKLM');
       animate();
     });
 });
@@ -53,18 +53,17 @@ function write(str) {
 
   for (let i = 0, n = str.length; i < n; i++) {
     const char = str.charAt(i);
-    const svgPath = font.chars[char];
+    const svgPath = fontData.chars[char];
     const svgSubPaths = svgPath.split('M');
     svgSubPaths.shift();
-    console.log('svgPath', svgPath);
-    console.log('svgSubPaths', svgSubPaths);
+    
     svgSubPaths.forEach(svgSubPath => {
       const path = parsePathNode('M' + svgSubPath);
       const points = path.getPoints();
 
       const geometry = new BufferGeometry().setFromPoints( points );
       const line = new Line(geometry, lineMaterial);
-      line.translateX(9 * i);
+      line.translateX((fontData.viewBox.width + fontData.spacing) * i);
       line.rotateX(-Math.PI);
 
       textGroup.add(line);
@@ -83,7 +82,7 @@ function parsePathNode(d, style) {
   const firstPoint = new THREE.Vector2();
   let isFirstPoint = true;
   let doSetFirstPoint = false;
-  // const d = font.chars[char];
+  // const d = fontData.chars[char];
   const commands = d.match( /[a-df-z][^a-df-z]*/ig );
 
   commands.forEach(command => {
