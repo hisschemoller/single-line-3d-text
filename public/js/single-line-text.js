@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(json => {
       initWorld();
-      write(json, 'TEXT IN 3D');
+      write(json, 'SINGLE LINE TEXT IN 3D');
       animate();
     });
 });
