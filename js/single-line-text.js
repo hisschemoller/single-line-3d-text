@@ -34,7 +34,7 @@ function animate() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  fetch('/json/asteroids.json')
+  fetch('../json/asteroids.json')
     .then(response => response.json())
     .then(json => {
       initWorld();
