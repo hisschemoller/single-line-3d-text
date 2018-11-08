@@ -1,6 +1,4 @@
 let scene, camera, renderer;
-let text;
-let fontData;
 let textGroup;
 
 function initWorld() {
@@ -36,14 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('../json/asteroids.json')
     .then(response => response.json())
     .then(json => {
-      fontData = json;
       initWorld();
-      write('HIJKLM');
+      write(json, 'HIJKLM');
       animate();
     });
 });
 
-function write(str) {
+function write(fontData, str) {
   const {LineBasicMaterial, Geometry, BufferGeometry, Object3D, Color, Line, Vector3} = THREE;
 
   const lineMaterial = new LineBasicMaterial({
@@ -71,19 +68,19 @@ function write(str) {
   }
 }
 
-function parsePathNode(d, style) {
-  const path = new THREE.Path();
-  // const path = new THREE.ShapePath();
-  // path.color.setStyle( 0x6666ff );
+/**
+ * From here the code is taken from threeJS's SVGLoader.
+ */
 
+function parsePathNode(pathString, style) {
+  const path = new THREE.Path();
   const point = new THREE.Vector2();
   const control = new THREE.Vector2();
-
   const firstPoint = new THREE.Vector2();
+  const commands = pathString.match( /[a-df-z][^a-df-z]*/ig );
+
   let isFirstPoint = true;
   let doSetFirstPoint = false;
-  // const d = fontData.chars[char];
-  const commands = d.match( /[a-df-z][^a-df-z]*/ig );
 
   commands.forEach(command => {
     const type = command.charAt(0);
@@ -110,26 +107,6 @@ function parsePathNode(d, style) {
         }
         break;
 
-      case 'H':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j ++ ) {
-          point.x = numbers[ j ];
-          control.x = point.x;
-          control.y = point.y;
-          path.lineTo( point.x, point.y );
-        }
-        break;
-
-      case 'V':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j ++ ) {
-          point.y = numbers[ j ];
-          control.x = point.x;
-          control.y = point.y;
-          path.lineTo( point.x, point.y );
-        }
-        break;
-
       case 'L':
         numbers = parseFloats( data );
         for ( let j = 0, jl = numbers.length; j < jl; j += 2 ) {
@@ -140,224 +117,6 @@ function parsePathNode(d, style) {
           path.lineTo( point.x, point.y );
         }
         break;
-
-      case 'C':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 6 ) {
-          path.bezierCurveTo(
-            numbers[ j + 0 ],
-            numbers[ j + 1 ],
-            numbers[ j + 2 ],
-            numbers[ j + 3 ],
-            numbers[ j + 4 ],
-            numbers[ j + 5 ]
-          );
-          control.x = numbers[ j + 2 ];
-          control.y = numbers[ j + 3 ];
-          point.x = numbers[ j + 4 ];
-          point.y = numbers[ j + 5 ];
-        }
-        break;
-
-      case 'S':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 4 ) {
-          path.bezierCurveTo(
-            getReflection( point.x, control.x ),
-            getReflection( point.y, control.y ),
-            numbers[ j + 0 ],
-            numbers[ j + 1 ],
-            numbers[ j + 2 ],
-            numbers[ j + 3 ]
-          );
-          control.x = numbers[ j + 0 ];
-          control.y = numbers[ j + 1 ];
-          point.x = numbers[ j + 2 ];
-          point.y = numbers[ j + 3 ];
-        }
-        break;
-
-      case 'Q':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 4 ) {
-          path.quadraticCurveTo(
-            numbers[ j + 0 ],
-            numbers[ j + 1 ],
-            numbers[ j + 2 ],
-            numbers[ j + 3 ]
-          );
-          control.x = numbers[ j + 0 ];
-          control.y = numbers[ j + 1 ];
-          point.x = numbers[ j + 2 ];
-          point.y = numbers[ j + 3 ];
-        }
-        break;
-
-      case 'T':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 2 ) {
-          let rx = getReflection( point.x, control.x );
-          let ry = getReflection( point.y, control.y );
-          path.quadraticCurveTo(
-            rx,
-            ry,
-            numbers[ j + 0 ],
-            numbers[ j + 1 ]
-          );
-          control.x = rx;
-          control.y = ry;
-          point.x = numbers[ j + 0 ];
-          point.y = numbers[ j + 1 ];
-        }
-        break;
-
-      case 'A':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 7 ) {
-          let start = point.clone();
-          point.x = numbers[ j + 5 ];
-          point.y = numbers[ j + 6 ];
-          control.x = point.x;
-          control.y = point.y;
-          parseArcCommand(
-            path, numbers[ j ], numbers[ j + 1 ], numbers[ j + 2 ], numbers[ j + 3 ], numbers[ j + 4 ], start, point
-          );
-        }
-        break;
-
-      //
-
-      case 'm':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 2 ) {
-          point.x += numbers[ j + 0 ];
-          point.y += numbers[ j + 1 ];
-          control.x = point.x;
-          control.y = point.y;
-          if ( j === 0 ) {
-            path.moveTo( point.x, point.y );
-          } else {
-            path.lineTo( point.x, point.y );
-          }
-        }
-        break;
-
-      case 'h':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j ++ ) {
-          point.x += numbers[ j ];
-          control.x = point.x;
-          control.y = point.y;
-          path.lineTo( point.x, point.y );
-        }
-        break;
-
-      case 'v':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j ++ ) {
-          point.y += numbers[ j ];
-          control.x = point.x;
-          control.y = point.y;
-          path.lineTo( point.x, point.y );
-        }
-        break;
-
-      case 'l':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 2 ) {
-          point.x += numbers[ j + 0 ];
-          point.y += numbers[ j + 1 ];
-          control.x = point.x;
-          control.y = point.y;
-          path.lineTo( point.x, point.y );
-        }
-        break;
-
-      case 'c':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 6 ) {
-          path.bezierCurveTo(
-            point.x + numbers[ j + 0 ],
-            point.y + numbers[ j + 1 ],
-            point.x + numbers[ j + 2 ],
-            point.y + numbers[ j + 3 ],
-            point.x + numbers[ j + 4 ],
-            point.y + numbers[ j + 5 ]
-          );
-          control.x = point.x + numbers[ j + 2 ];
-          control.y = point.y + numbers[ j + 3 ];
-          point.x += numbers[ j + 4 ];
-          point.y += numbers[ j + 5 ];
-        }
-        break;
-
-      case 's':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 4 ) {
-          path.bezierCurveTo(
-            getReflection( point.x, control.x ),
-            getReflection( point.y, control.y ),
-            point.x + numbers[ j + 0 ],
-            point.y + numbers[ j + 1 ],
-            point.x + numbers[ j + 2 ],
-            point.y + numbers[ j + 3 ]
-          );
-          control.x = point.x + numbers[ j + 0 ];
-          control.y = point.y + numbers[ j + 1 ];
-          point.x += numbers[ j + 2 ];
-          point.y += numbers[ j + 3 ];
-        }
-        break;
-
-      case 'q':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 4 ) {
-          path.quadraticCurveTo(
-            point.x + numbers[ j + 0 ],
-            point.y + numbers[ j + 1 ],
-            point.x + numbers[ j + 2 ],
-            point.y + numbers[ j + 3 ]
-          );
-          control.x = point.x + numbers[ j + 0 ];
-          control.y = point.y + numbers[ j + 1 ];
-          point.x += numbers[ j + 2 ];
-          point.y += numbers[ j + 3 ];
-        }
-        break;
-
-      case 't':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 2 ) {
-          let rx = getReflection( point.x, control.x );
-          let ry = getReflection( point.y, control.y );
-          path.quadraticCurveTo(
-            rx,
-            ry,
-            point.x + numbers[ j + 0 ],
-            point.y + numbers[ j + 1 ]
-          );
-          control.x = rx;
-          control.y = ry;
-          point.x = point.x + numbers[ j + 0 ];
-          point.y = point.y + numbers[ j + 1 ];
-        }
-        break;
-
-      case 'a':
-        numbers = parseFloats( data );
-        for ( let j = 0, jl = numbers.length; j < jl; j += 7 ) {
-          let start = point.clone();
-          point.x += numbers[ j + 5 ];
-          point.y += numbers[ j + 6 ];
-          control.x = point.x;
-          control.y = point.y;
-          parseArcCommand(
-            path, numbers[ j ], numbers[ j + 1 ], numbers[ j + 2 ], numbers[ j + 3 ], numbers[ j + 4 ], start, point
-          );
-        }
-        break;
-
-      //
 
       case 'Z':
       case 'z':
@@ -375,14 +134,9 @@ function parsePathNode(d, style) {
 
     }
 
-    // console.log( type, parseFloats( data ), parseFloats( data ).length  )
-
     if ( doSetFirstPoint ) {
-
       firstPoint.copy( point );
-
       doSetFirstPoint = false;
-
     }
   });
 
