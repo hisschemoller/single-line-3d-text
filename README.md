@@ -11,6 +11,9 @@ $ yarn start
 ```
 ...and the app will be available at localhost:3009
 
+Or see it here on GitHub Pages: 
+### [https://hisschemoller.github.io/single-line-text-threejs/](https://hisschemoller.github.io/single-line-text-threejs/)
+
 ## Minimal 3D text for Three.js
 This code renders text in the simplest way possible, in 3D. Each character is just a few lines rendered with a `LineBasicMaterial`.
 
@@ -20,8 +23,8 @@ I found an interesting [summary of single-line fonts](http://www.imajeenyus.com/
 Atari programmer [Ed Logg](https://en.wikipedia.org/wiki/Ed_Logg) made the original font. More recently [Trammell Hudson](https://trmm.net/About) made a slightly [adjusted version of the font](https://trmm.net/Asteroids_font) for his own projects, of which he put the [source file on GitHub](https://github.com/osresearch/vst/blob/master/teensyv/asteroids_font.c).
 
 ![Asteroids](public/img/ed_logg_asteroids.jpg?raw=true 'Asteroids')
-Ed Logg's original hand-drawn sketch on the left and Trammell Hudson's variation on the right.
-(Image from Trammell Hudson's website)
+
+Ed Logg's original hand-drawn sketch on the left and Trammell Hudson's variation on the right. (image from Trammell Hudson's website)
 
 This must be one of the least resource using vector fonts. Each character just uses a few straight lines. 
 
