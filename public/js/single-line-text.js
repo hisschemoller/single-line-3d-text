@@ -35,18 +35,21 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(json => {
       initWorld();
-      write(json, 'HIJKLM');
+      write(json, 'TEXT IN 3D');
       animate();
     });
 });
 
 function write(fontData, str) {
-  const {LineBasicMaterial, Geometry, BufferGeometry, Object3D, Color, Line, Vector3} = THREE;
+  const {LineBasicMaterial, Geometry, BufferGeometry, Object3D, Color, Line, Vector3, Group} = THREE;
 
   const lineMaterial = new LineBasicMaterial({
     color: new Color( 0x00ff00 ),
     linewidth: 3,
   });
+
+  const lineGroup = new Group();
+  textGroup.add(lineGroup);
 
   for (let i = 0, n = str.length; i < n; i++) {
     const char = str.charAt(i);
@@ -63,9 +66,12 @@ function write(fontData, str) {
       line.translateX((fontData.viewBox.width + fontData.spacing) * i);
       line.rotateX(-Math.PI);
 
-      textGroup.add(line);
+      lineGroup.add(line);
     });
   }
+
+  // center line of text
+  lineGroup.translateX((str.length * (fontData.viewBox.width + fontData.spacing)) / -2);
 }
 
 /**
