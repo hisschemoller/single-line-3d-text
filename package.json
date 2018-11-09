@@ -1,13 +1,13 @@
 {
-  "name": "single-line-text-threejs",
+  "name": "single-line-3d-text",
   "version": "1.0.0",
-  "description": "Simple single line text in webGL with minimal line segments.",
-  "author": "",
+  "description": "Simple single line text in webGL (three.js) with minimal line segments.",
+  "author": "Wouter Hisschemöller",
   "main": "server.js",
-  "homepage": "https://hisschemoller.github.io/single-line-text-threejs",
+  "homepage": "https://hisschemoller.github.io/single-line-3d-text",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hisschemoller/single-line-text-threejs"
+    "url": "https://github.com/hisschemoller/single-line-3d-text"
   },
   "directories": {
     "lib": "lib"
@@ -15,7 +15,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "ghelp": "gh-pages --help",
     "deploy": "gh-pages -d public"
   },
   "keywords": [],
