@@ -1,7 +1,7 @@
 # single-line-3d-text
 
 ## Single-line fonts
-JavaScript for single-line 3D text to be used in three.js. Regular fonts characters are usually outline fonts. The font file describes the outline of the characters, and the outline is filled with a color. The fill is the only actual visible part.
+JavaScript for single-line 3D text to be used in three.js. Regular fonts characters are usually outline fonts. These font file describes the outline of characters, and the outline is filled with a color. The fill is the only actual visible part.
 
 In a single-line font the line itself is the visible part of the font. It makes for much simpler font files. Compare it to writing with a pen: It's much quicker and simpler to directly write characters as lines than to draw them as outlined shapes and fill in the shapes. 
 
@@ -23,7 +23,7 @@ Or see it here on GitHub Pages:
 ### [https://hisschemoller.github.io/single-line-3d-text/](https://hisschemoller.github.io/single-line-3d-text/)
 
 ## Minimal 3D text for Three.js
-I needed a simple text format for a 3D project, so that the text would use minimal resources and the processor could devote all it's power to smooth animation and steady timing. This code renders text in the simplest way possible, in 3D. Each character is just a few straight lines rendered with a `LineBasicMaterial`.
+I needed a simple text format for a 3D project, where the text should use minimal resources and the processor could devote all it's power to smooth animation and steady timing. This code renders text in the simplest way possible, in 3D. Each character is just a few straight lines rendered with a `LineBasicMaterial`.
 
 ## Asteroids
 I found an interesting [summary of single-line fonts](http://www.imajeenyus.com/computer/20150110_single_line_fonts/index.shtml) by [Lindsay Robert Wilson](http://www.imajeenyus.com/about_me.shtml), which mentions the font used in Atari's 1979 [Asteroids](https://en.wikipedia.org/wiki/Asteroids_(video_game)) game.
@@ -55,7 +55,7 @@ const asteroids_char_t asteroids_font[] = {
 
 From there I could take some functions from ThreeJS's `SVGLoader` to parse the SVG strings into `Path` objects, en then create `Line` objects for each character and align them horizontally as a line of text in a `Group`.
 
-Very cheap and simple text. The only thing I don't like about the `LineBasicMaterial` text is that lines can only be 1 pixel wide. I would have liked to be able to adjust the line thickness.
+Very cheap and simple text. The only thing I don't like about the `LineBasicMaterial` text is that lines can only be 1 pixel wide. I would have liked to be able to adjust the line thickness. I will try and see if I can change that at some point, but for now this code does what I need.
 
 ![Ed Logg](public/img/ed_logg.jpg?raw=true 'Ed Logg')
 
